@@ -6,6 +6,6 @@ import lombok.Setter;
 
 @Getter @Setter @AllArgsConstructor
 public class Location {
-    private int x;
-    private int y;
+    private double x;
+    private double y;
 }

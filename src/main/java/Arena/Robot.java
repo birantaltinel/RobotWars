@@ -43,15 +43,18 @@ public abstract class Robot {
      * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
      * @param distance  The maximum distance is 700 meters. If the given value exceeds the maximum, the distance will be adjusted as 700.
      */
-//    final public Rocket fire(int direction, int distance) {
-//        Location target = calculateTargetLocation(direction, distance);
-//        int speed = 100;
-//        return new Rocket(direction, speed, location, target);
-//    }
+    final public Rocket fire(int direction, int distance) {
+        Location target = calculateTargetLocation(direction, distance);
+        int speed = 100;
+        return new Rocket(direction, speed, location, target);
+    }
 
-//    private Location calculateTargetLocation(int direction, int distance) {
-//
-//    }
+    private Location calculateTargetLocation(int directionInDegrees, int distance) {
+        double directionInRadians = Math.toRadians(directionInDegrees);
+        double targetX = Math.cos(directionInRadians) * distance + location.getX();
+        double targetY = Math.sin(directionInRadians) * distance + location.getY();
+        return new Location(targetX, targetY); // address the precision problem here with casting
+    }
 
     /**
      * @return True if the cannon has finished reloading and can fire another missile. False otherwise.
@@ -84,14 +87,14 @@ public abstract class Robot {
     /**
      * @return the x coordinate of the current location.
      */
-    final public int getXCoordinate() {
+    final public double getXCoordinate() {
         return location.getX();
     }
 
     /**
      * @return the y coordinate of the current location.
      */
-    final public int getYCoordinate() {
+    final public double getYCoordinate() {
         return location.getY();
     }
 }
