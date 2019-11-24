@@ -1,13 +1,18 @@
 package Arena;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-public abstract class Robot {
-    private int health;
-    private int direction;
-    private int speed;
+@Builder @AllArgsConstructor
+public class Robot {
+    private @Builder.Default int health = 100;
+    private @Builder.Default int direction = 0;
+    private @Builder.Default int speed = 0;
     private Location location;
     private Arena arena;
     private List<Rocket> rockets;
@@ -16,7 +21,10 @@ public abstract class Robot {
     private final int maxSpeed = 10;
     private final int maxRocketDistance = 700;
 
-    public Robot() {}
+    public Robot() {
+        location = new Location((int) Math.random() * 500, (int) Math.random() * 500);
+        rockets = new ArrayList<Rocket>();
+    }
     /**
      * Specify the angles(0-359) between which the scan will be performed.
      * A maximum of 90 degrees can be scanned in 1 turn.
