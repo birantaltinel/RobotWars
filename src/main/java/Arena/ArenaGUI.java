@@ -1,6 +1,6 @@
 package Arena;
 
-import java.awt.Color;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JFrame;
@@ -9,8 +9,6 @@ import javax.swing.Timer;
 
 public class ArenaGUI implements Runnable {
     private final JFrame arena;
-    private final JPanel square = new JPanel();
-    private int x = 0;
 
     public ArenaGUI() {
         arena = new JFrame();
@@ -18,25 +16,25 @@ public class ArenaGUI implements Runnable {
         arena.setSize(500,500);
         arena.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        arena.add(square);
-        square.setBounds(20,200,100,100);
-        square.setBackground(Color.RED);
-
-        Timer timer = new Timer(1000/60,new MyActionListener());
+        Timer timer = new Timer(1000/60,new WindowUpdater());
         timer.start();
         arena.setVisible(true);
+    }
+
+    public void addElement(JPanel element) {
+        arena.add(element);
+        element.setBounds(250,250,20,20);
+        element.setBackground(Color.RED);
     }
 
     @Override
     public void run() {
     }
 
-    public class MyActionListener implements ActionListener{
+    public class WindowUpdater implements ActionListener{
 
         @Override
         public void actionPerformed(ActionEvent arg0) {
-            square.setLocation(x++, 0);
-
         }
 
     }

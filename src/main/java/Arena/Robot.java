@@ -1,11 +1,9 @@
 package Arena;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.*;
 
-import java.awt.geom.Point2D;
+import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Builder @AllArgsConstructor
@@ -13,37 +11,31 @@ public class Robot {
     private @Builder.Default int health = 100;
     private @Builder.Default int direction = 0;
     private @Builder.Default int speed = 0;
-    private Location location;
+    private @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) Location location;
     private Arena arena;
     private List<Rocket> rockets;
-    private final int scanningRange = 500;
+    private JComponent element;
+
     private final int maxScanningAngle = 90;
     private final int maxSpeed = 10;
-    private final int maxRocketDistance = 700;
+    private final int maxRocketDistance = 250;
 
-    public Robot() {
-        location = new Location((int) Math.random() * 500, (int) Math.random() * 500);
-        rockets = new ArrayList<Rocket>();
-    }
+    public Robot() { }
     /**
      * Specify the angles(0-359) between which the scan will be performed.
      * A maximum of 90 degrees can be scanned in 1 turn.
-     * Has a range of 500 meters.
+     * Has a range of 250 meters.
      *
-     * @param startingAngle  If a value exceeding the maximum angle is provided, the result of (startingAngle mod 360) will be used.
-     * @param finishingAngle If a value exceeding the maximum angle is provided, the result of (finishingAngle mod 360) will be used.
+     * @param startingAngle  If a value exceeding the 360 is provided, the result of (startingAngle mod 360) will be used.
+     * @param finishingAngle If a value exceeding the 360 is provided, the result of (finishingAngle mod 360) will be used.
      * @return Returns the distance to the closest enemy in the scanned region. If no enemy is present, returns -1.0;
      */
     final public double scan(int startingAngle, int finishingAngle) {
-        List<Robot> foundRobots = arena.getRobotsInScanningArea(
-                new ScanningArea(location, startingAngle, finishingAngle, scanningRange)
-        );
-        return foundRobots
-                .stream()
-                .map(robot -> new Location(robot.getXCoordinate(), robot.getYCoordinate()))
-                .map(enemyRobotLocation -> Point2D.distance(location.getX(), location.getY(), enemyRobotLocation.getX(), enemyRobotLocation.getY()))
-                .min(Comparator.comparing(Double::valueOf))
-                .orElse(-1.0);
+        if(Math.abs(startingAngle - finishingAngle) > 90)
+            return arena.getDistanceToClosestRobotFrom(this, startingAngle, startingAngle + 90);
+        if(finishingAngle < startingAngle)
+            return arena.getDistanceToClosestRobotFrom(this, finishingAngle, startingAngle);
+        return arena.getDistanceToClosestRobotFrom(this, startingAngle, finishingAngle);
     }
 
     /**
@@ -61,7 +53,7 @@ public class Robot {
      * Fires a missile towards the given direction and distance. If the cannon has not finished reloading yet, this function does nothing.
      *
      * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
-     * @param distance  The maximum distance is 700 meters. If the given value exceeds the maximum, the distance will be adjusted as 700.
+     * @param distance  The maximum distance is 250 meters. If the given value exceeds the maximum, the distance will be adjusted as 250.
      */
     final public Rocket fire(int direction, double distance) {
         int correctedDirection = direction % 360;
