@@ -39,6 +39,10 @@ public class Arena {
 //        return new Arena.Location(x, y);
 //    }
 
+    public List<Robot> getRobotsInScanningArea(ScanningArea area) {
+        return this.robots;
+    }
+
     public static void main(String[] args) {
         Arena arena = new Arena();
     }
