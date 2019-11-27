@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Builder @AllArgsConstructor
-public class Robot {
+public class Robot implements Runnable {
     private @Builder.Default int health = 100;
     private @Builder.Default int direction = 0;
     private @Builder.Default int speed = 0;
@@ -110,5 +110,21 @@ public class Robot {
      */
     final public double getYCoordinate() {
         return location.getY();
+    }
+
+    /**
+     * When an object implementing interface <code>Runnable</code> is used
+     * to create a thread, starting the thread causes the object's
+     * <code>run</code> method to be called in that separately executing
+     * thread.
+     * <p>
+     * The general contract of the method <code>run</code> is that it may
+     * take any action whatsoever.
+     *
+     * @see Thread#run()
+     */
+    @Override
+    public void run() {
+
     }
 }

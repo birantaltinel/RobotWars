@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
-import SampleRobots.Rabbit;
 import lombok.Getter;
 
 import javax.swing.*;
@@ -26,7 +25,7 @@ public class Arena {
     public Robot addRobot() {
         JPanel element = new JPanel();
         this.arenaGUI.addElement(element);
-        Robot robot = Rabbit.builder()
+        Robot robot = Robot.builder()
                 .direction(0)
                 .health(100)
                 .location(getRandomLocation())
