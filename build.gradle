@@ -14,4 +14,6 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compileOnly 'org.projectlombok:lombok:1.18.10'
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
+    compile 'net.openhft:compiler:2.3.4'
+    compile 'org.slf4j:slf4j-simple:1.6.4'
 }
