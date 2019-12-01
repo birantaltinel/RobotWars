@@ -1,10 +1,8 @@
 package Arena;
 
-import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import Arena.Exceptions.RobotNotLoadedException;
 import lombok.Getter;
 
@@ -59,10 +57,11 @@ public class Arena {
      */
     private void winningSequence() {
         Robot winner = this.robots.get(0);
+        this.arenaGUI.declareWinner(winner.getClass().getName());
     }
 
     /**
-     * Loads and initializes a robot from the given path to the robot description file.
+     * Loads and initializes a robot from the given file system path to the robot description file.
      * @param robotFilePath Path to the robot file written in the custom robot language.
      * @throws RobotNotLoadedException If the dynamic class loader fails to load the robot file, this exception will be thrown.
      */
@@ -78,11 +77,19 @@ public class Arena {
         this.robots.add(robot);
     }
 
+    /**
+     * Calls all the custom robot codes that will run for one turn. This function should be called once every turn.
+     */
     private void runRobotsForOneTurn() {
         this.robots
                 .forEach(Robot::run);
     }
 
+    /**
+     * Returns the number of rockets in the air for the given robot.
+     * @param robot The robot for which the number of rockets will be returned.
+     * @return The number of rockets in the air.
+     */
     int rocketsInTheAirFor(Robot robot) {
         return (int) this.rockets
                 .stream()
@@ -110,7 +117,7 @@ public class Arena {
         this.arenaGUI.animateExplosionOf(rocket.getElement());
         this.robots
                 .stream()
-                .filter(robot -> Point2D.distance(rocket.getLocation().getX(), rocket.getLocation().getY(), robot.getXCoordinate(), robot.getYCoordinate()) <= rocketExplosionRadius)
+                .filter(robot -> Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) <= rocketExplosionRadius)
                 .forEach(robot -> {
                     robot.decreaseHealthBy(rocketExplosionDamage);
                     if(robot.getHealth() <= 0) {

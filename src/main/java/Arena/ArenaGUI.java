@@ -36,6 +36,11 @@ class ArenaGUI{
         this.arena.remove(element);
     }
 
+    void declareWinner(String nameOfTheWinner) {
+        // show a message declaring winner
+        // stop all other visuals
+    }
+
     public class WindowUpdater implements ActionListener{
 
         @Override
