@@ -6,36 +6,116 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
+import Arena.Exceptions.RobotNotLoadedException;
 import lombok.Getter;
 
 import javax.swing.*;
 
 public class Arena {
-    private List<Robot> robots;
+    private @Getter List<Robot> robots;
+    private List<Rocket> rockets;
     private @Getter final int width = 500;
     private @Getter final int height = 500;
     private final int scanningRange = 250;
+    private final int rocketExplosionRadius = 25;
+    private final int rocketExplosionDamage = 10;
     private ArenaGUI arenaGUI;
+    private RobotLoader robotLoader;
 
     public Arena() {
         this.arenaGUI = new ArenaGUI();
         this.robots = new ArrayList<Robot>();
+        this.rockets = new ArrayList<Rocket>();
+        this.robotLoader = new RobotLoader();
     }
 
-    public Robot addRobot() {
+    public void update() {
+        this.robots
+                .stream()
+                .forEach(robot -> {
+                    Location newLocation = getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
+                    robot.setLocation(newLocation);
+                    //damage if collisions
+                });
+        this.rockets
+                .stream()
+                .forEach(rocket -> {
+                    Location newLocation = getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
+                    rocket.setLocation(newLocation);
+                    if( getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
+                        explodeRocket(rocket);
+                    }
+                });
+    }
+
+    /**
+     * Loads and initializes a robot from the given path to the robot description file.
+     * @param robotFilePath Path to the robot file written in the custom robot language.
+     * @return The new robot object.
+     * @throws RobotNotLoadedException
+     */
+    public Robot addRobot(String robotFilePath) throws RobotNotLoadedException {
+        Robot robot = robotLoader.inMemoryLoader(robotFilePath);
+
         JPanel element = new JPanel();
         this.arenaGUI.addElement(element);
-        Robot robot = Robot.builder()
-                .direction(0)
-                .health(100)
-                .location(getRandomLocation())
-                .speed(0)
-                .arena(this)
-                .rockets(new ArrayList<>())
-                .element(element)
-                .build();
+        robot.setElement(element);
+        robot.setLocation(getRandomLocation());
+        robot.setArena(this);
+
         this.robots.add(robot);
         return robot;
+    }
+
+    public void runRobotsForOneTurn() {
+        this.robots
+                .stream()
+                .forEach(Robot::run);
+    }
+
+    public int rocketsInTheAirFor(Robot robot) {
+        return (int) this.rockets
+                .stream()
+                .filter(rocket -> rocket.getSender() == robot)
+                .count();
+    }
+
+    /**
+     * Accepts the sent rocket from the robot
+     * @param rocket
+     */
+    public void sendRocket(Rocket rocket) {
+        JPanel element = new JPanel();
+        this.arenaGUI.addElement(element);
+        rocket.setElement(element);
+
+        this.rockets.add(rocket);
+    }
+
+    /**
+     * Explodes the given rocket and handles all corresponding events.
+     * @param rocket
+     */
+    public void explodeRocket(Rocket rocket) {
+        this.arenaGUI.animateExplosionOf(rocket.getElement());
+        this.robots
+                .stream()
+                .filter(robot -> Point2D.distance(rocket.getLocation().getX(), rocket.getLocation().getY(), robot.getXCoordinate(), robot.getYCoordinate()) <= rocketExplosionRadius)
+                .forEach(robot -> {
+                    robot.decreaseHealthBy(rocketExplosionDamage);
+                    if(robot.getHealth() <= 0) {
+                        killRobot(robot);
+                    }
+                });
+        this.rockets.remove(rocket);
+    }
+
+    /**
+     * Kills the robot and removes it from the arena.
+     * @param robot
+     */
+    public void killRobot(Robot robot) {
+        this.arenaGUI.removeElement(robot.getElement());
     }
 
     /**
@@ -61,7 +141,7 @@ public class Arena {
                 .stream()
                 .map(Robot::getLocation)
                 .filter(enemyRobotLocation -> isInsideTheScanningArea(robot.getLocation(), startingAngle, finishingAngle, enemyRobotLocation))
-                .map(enemyRobotLocation -> Point2D.distance(robot.getXCoordinate(), robot.getYCoordinate(), enemyRobotLocation.getX(), enemyRobotLocation.getY()))
+                .map(enemyRobotLocation -> getDistanceBetween(robot.getLocation(), enemyRobotLocation))
                 .min(Comparator.comparing(Double::valueOf))
                 .orElse(-1.0);
     }
@@ -78,17 +158,33 @@ public class Arena {
         double y = scanningTarget.getY() - scanningSource.getY();
         double x = scanningTarget.getX() - scanningSource.getX();
         double angleBetweenPoints = Math.atan2(y, x);
-        double distanceBetweenPoints = Point2D.distance(scanningSource.getX(), scanningSource.getY(), scanningTarget.getX(), scanningTarget.getY());
-        return angleBetweenPoints > startingAngle && angleBetweenPoints < finishingAngle && distanceBetweenPoints <= scanningRange;
+
+        return angleBetweenPoints > startingAngle &&
+                angleBetweenPoints < finishingAngle &&
+                getDistanceBetween(scanningSource, scanningTarget) <= scanningRange;
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    private double getDistanceBetween(Location location1, Location location2) {
+        return Point2D.distance(location1.getX(), location1.getY(), location2.getX(), location2.getY());
+    }
+
+    private Location getNewLocationBy(Location location, int direction, int speed) {
+        double magnitudeX = Math.cos(Math.toRadians(direction)) * speed;
+        double magnitudeY = Math.sin(Math.toRadians(direction)) * speed;
+
+        return new Location(location.getX() + magnitudeX, location.getY() + magnitudeY);
+    }
+
+    public static void main(String[] args) throws RobotNotLoadedException, InterruptedException {
         Arena arena = new Arena();
-//        while(true){
-//            Random rand = new Random();
-//            arena.element.setLocation( arena.element.getX() + rand.nextInt(3) - 1, arena.element.getY() + rand.nextInt(3) - 1);
-//            Thread.sleep(1000/60);
-//        }
-        Robot robot = arena.addRobot();
+
+        for(String robotFilePath: args)
+            arena.addRobot(robotFilePath);
+
+        while(true){
+            arena.runRobotsForOneTurn();
+            arena.update();
+            Thread.sleep(1000/60);
+        }
     }
 }

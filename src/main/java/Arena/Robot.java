@@ -1,20 +1,18 @@
 package Arena;
 
 import lombok.*;
-
 import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Builder @AllArgsConstructor
+@AllArgsConstructor
 public class Robot implements Runnable {
-    private @Builder.Default int health = 100;
-    private @Builder.Default int direction = 0;
-    private @Builder.Default int speed = 0;
-    private @Getter(AccessLevel.PROTECTED) @Setter(AccessLevel.PROTECTED) Location location;
-    private Arena arena;
-    private List<Rocket> rockets;
-    private JComponent element;
+    private int health = 100;
+    private int direction = 0;
+    private int speed = 0;
+    private @Getter(AccessLevel.PROTECTED) Location location;
+    private @Setter Arena arena;
+    private @Getter JPanel element;
 
     private final int maxScanningAngle = 90;
     private final int maxSpeed = 10;
@@ -31,8 +29,8 @@ public class Robot implements Runnable {
      * @return Returns the distance to the closest enemy in the scanned region. If no enemy is present, returns -1.0;
      */
     final public double scan(int startingAngle, int finishingAngle) {
-        if(Math.abs(startingAngle - finishingAngle) > 90)
-            return arena.getDistanceToClosestRobotFrom(this, startingAngle, startingAngle + 90);
+        if(Math.abs(startingAngle - finishingAngle) > maxScanningAngle)
+            return arena.getDistanceToClosestRobotFrom(this, startingAngle, startingAngle + maxScanningAngle);
         if(finishingAngle < startingAngle)
             return arena.getDistanceToClosestRobotFrom(this, finishingAngle, startingAngle);
         return arena.getDistanceToClosestRobotFrom(this, startingAngle, finishingAngle);
@@ -55,12 +53,16 @@ public class Robot implements Runnable {
      * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
      * @param distance  The maximum distance is 250 meters. If the given value exceeds the maximum, the distance will be adjusted as 250.
      */
-    final public Rocket fire(int direction, double distance) {
+    final public void fire(int direction, double distance) {
+        if(!isCannonReloaded())
+            return;
+
         int correctedDirection = direction % 360;
         double correctedDistance = distance % maxRocketDistance;
         Location target = calculateTargetLocation(correctedDirection, correctedDistance);
-        int speed = 100;
-        return new Rocket(correctedDirection, speed, location, target);
+        Rocket rocket = new Rocket(correctedDirection, location, target, this);
+
+        arena.sendRocket(rocket);
     }
 
     private Location calculateTargetLocation(int directionInDegrees, double distance) {
@@ -74,7 +76,7 @@ public class Robot implements Runnable {
      * @return True if the cannon has finished reloading and can fire another missile. False otherwise.
      */
     final public boolean isCannonReloaded() {
-        return rockets.size() < 2;
+        return arena.rocketsInTheAirFor(this) < 2;
     }
 
     /**
@@ -113,18 +115,27 @@ public class Robot implements Runnable {
     }
 
     /**
-     * When an object implementing interface <code>Runnable</code> is used
-     * to create a thread, starting the thread causes the object's
-     * <code>run</code> method to be called in that separately executing
-     * thread.
-     * <p>
-     * The general contract of the method <code>run</code> is that it may
-     * take any action whatsoever.
-     *
-     * @see Thread#run()
+     * Sets the location of the robot on the arena.
+     * @param location
      */
-    @Override
-    public void run() {
+    final public void setLocation(Location location) {
+        this.location = location;
+        if(this.element != null) this.element.setLocation(location.getPoint());
+    }
 
+    /**
+     * Sets the graphical component that represents the robot on the Arena GUI.
+     * @param element
+     */
+    final public void setElement(JPanel element) {
+        this.element = element;
+        if(this.location != null) this.element.setLocation(this.location.getPoint());
+    }
+
+    final public void decreaseHealthBy(int damage) {
+        this.health -= damage;
+    }
+
+    public void run() {
     }
 }

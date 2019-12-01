@@ -24,7 +24,16 @@ public class ArenaGUI implements Runnable {
     public void addElement(JPanel element) {
         arena.add(element);
         element.setBounds(250,250,20,20);
-        element.setBackground(Color.RED);
+        element.setBackground(Color.GREEN);
+    }
+
+    public void removeElement(JPanel element) {
+        this.arena.remove(element);
+    }
+
+    public void animateExplosionOf(JPanel element) {
+        //do some basic animation here
+        this.arena.remove(element);
     }
 
     @Override
