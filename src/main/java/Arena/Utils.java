@@ -1,9 +1,10 @@
 package Arena;
 
 import java.awt.geom.Point2D;
+import java.util.Random;
 
-public class Utils {
-    private final int scanningRange = 250;
+class Utils {
+    private static final int scanningRange = 250;
 
     /**
      * Calculates the new location given the current location, direction and the speed
@@ -12,7 +13,7 @@ public class Utils {
      * @param speed The speed.
      * @return The new location.
      */
-    public static Location getNewLocationBy(Location location, int direction, int speed) {
+    static Location getNewLocationBy(Location location, int direction, int speed) {
         double magnitudeX = Math.cos(Math.toRadians(direction)) * speed;
         double magnitudeY = Math.sin(Math.toRadians(direction)) * speed;
 
@@ -27,7 +28,7 @@ public class Utils {
      * @param scanningTarget The target location that is checked.
      * @return true if the target location is within the scanned area, false otherwise.
      */
-    public static boolean isInsideTheScanningArea(Location scanningSource, int startingAngle, int finishingAngle, Location scanningTarget) {
+    static boolean isInsideTheScanningArea(Location scanningSource, int startingAngle, int finishingAngle, Location scanningTarget) {
         double y = scanningTarget.getY() - scanningSource.getY();
         double x = scanningTarget.getX() - scanningSource.getX();
         double angleBetweenPoints = Math.atan2(y, x);
@@ -43,7 +44,18 @@ public class Utils {
      * @param location2 Second location.
      * @return The distance between the locations as a double.
      */
-    public static double getDistanceBetween(Location location1, Location location2) {
+    static double getDistanceBetween(Location location1, Location location2) {
         return Point2D.distance(location1.getX(), location1.getY(), location2.getX(), location2.getY());
+    }
+
+    /**
+     * Returns a random location inside the arena.
+     * @return a random location inside the arena.
+     */
+    static Location getRandomLocation(int width, int height) {
+        Random rand = new Random();
+        int x = rand.nextInt(width);
+        int y = rand.nextInt(height);
+        return new Location(x, y);
     }
 }

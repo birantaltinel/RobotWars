@@ -7,10 +7,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-public class ArenaGUI implements Runnable {
+class ArenaGUI{
     private final JFrame arena;
 
-    public ArenaGUI() {
+    ArenaGUI() {
         arena = new JFrame();
         arena.getContentPane().setLayout(null);
         arena.setSize(500,500);
@@ -21,23 +21,19 @@ public class ArenaGUI implements Runnable {
         arena.setVisible(true);
     }
 
-    public void addElement(JPanel element) {
+    void addElement(JPanel element) {
         arena.add(element);
         element.setBounds(250,250,20,20);
         element.setBackground(Color.GREEN);
     }
 
-    public void removeElement(JPanel element) {
+    void removeElement(JPanel element) {
         this.arena.remove(element);
     }
 
-    public void animateExplosionOf(JPanel element) {
+    void animateExplosionOf(JPanel element) {
         //do some basic animation here
         this.arena.remove(element);
-    }
-
-    @Override
-    public void run() {
     }
 
     public class WindowUpdater implements ActionListener{
@@ -46,9 +42,5 @@ public class ArenaGUI implements Runnable {
         public void actionPerformed(ActionEvent arg0) {
         }
 
-    }
-
-    public static void main(String[] args) {
-        javax.swing.SwingUtilities.invokeLater(new ArenaGUI());
     }
 }

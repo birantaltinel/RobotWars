@@ -1,13 +1,10 @@
 package Arena;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
-
 import javax.swing.*;
 
 @Getter
-public class Rocket {
+class Rocket {
     private final int direction;
     private final int speed = 100;
     private Location location;
@@ -15,11 +12,11 @@ public class Rocket {
     private Robot sender;
     private JPanel element;
 
-    public Rocket(
-        int direction,
-        Location location,
-        Location target,
-        Robot sender
+    Rocket(
+            int direction,
+            Location location,
+            Location target,
+            Robot sender
     ) {
         this.direction = direction;
         this.location = location;
@@ -29,18 +26,18 @@ public class Rocket {
 
     /**
      * Sets the location of the rocket on the arena.
-     * @param location
+     * @param location The new location.
      */
-    final public void setLocation(Location location) {
+    final void setLocation(Location location) {
         this.location = location;
         if(this.element != null) this.element.setLocation(location.getPoint());
     }
 
     /**
      * Sets the graphical component that represents the rocket on the Arena GUI.
-     * @param element
+     * @param element The swing GUI element that will be bound to this Rocket object.
      */
-    final public void setElement(JPanel element) {
+    final void setElement(JPanel element) {
         this.element = element;
         if(this.location != null) this.element.setLocation(this.location.getPoint());
     }

@@ -4,7 +4,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 import Arena.Exceptions.RobotNotLoadedException;
 import lombok.Getter;
@@ -21,23 +20,23 @@ public class Arena {
     private ArenaGUI arenaGUI;
     private RobotLoader robotLoader;
 
-    public Arena() {
+    private Arena() {
         this.arenaGUI = new ArenaGUI();
         this.robots = new ArrayList<Robot>();
         this.rockets = new ArrayList<Rocket>();
         this.robotLoader = new RobotLoader();
     }
 
-    public void update() {
+    /**
+     * Updates the arena to reflect the results of the turn that all robots have played.
+     */
+    private void update() {
         this.robots
-                .stream()
                 .forEach(robot -> {
                     Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
                     robot.setLocation(newLocation);
-                    //damage if collisions
                 });
         this.rockets
-                .stream()
                 .forEach(rocket -> {
                     Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
                     rocket.setLocation(newLocation);
@@ -48,31 +47,43 @@ public class Arena {
     }
 
     /**
+     *
+     * @return true if there is a winner of the battle, false otherwise.
+     */
+    private boolean thereIsAWinner() {
+        return this.robots.size() == 1;
+    }
+
+    /**
+     * Executes the winning sequence after a winner is declared.
+     */
+    private void winningSequence() {
+        Robot winner = this.robots.get(0);
+    }
+
+    /**
      * Loads and initializes a robot from the given path to the robot description file.
      * @param robotFilePath Path to the robot file written in the custom robot language.
-     * @return The new robot object.
-     * @throws RobotNotLoadedException
+     * @throws RobotNotLoadedException If the dynamic class loader fails to load the robot file, this exception will be thrown.
      */
-    public Robot addRobot(String robotFilePath) throws RobotNotLoadedException {
+    private void addRobot(String robotFilePath) throws RobotNotLoadedException {
         Robot robot = robotLoader.load(robotFilePath);
 
         JPanel element = new JPanel();
         this.arenaGUI.addElement(element);
         robot.setElement(element);
-        robot.setLocation(getRandomLocation());
+        robot.setLocation(Utils.getRandomLocation(width, height));
         robot.setArena(this);
 
         this.robots.add(robot);
-        return robot;
     }
 
-    public void runRobotsForOneTurn() {
+    private void runRobotsForOneTurn() {
         this.robots
-                .stream()
                 .forEach(Robot::run);
     }
 
-    public int rocketsInTheAirFor(Robot robot) {
+    int rocketsInTheAirFor(Robot robot) {
         return (int) this.rockets
                 .stream()
                 .filter(rocket -> rocket.getSender() == robot)
@@ -81,9 +92,9 @@ public class Arena {
 
     /**
      * Accepts the sent rocket from the robot
-     * @param rocket
+     * @param rocket The rocket that is sent.
      */
-    public void sendRocket(Rocket rocket) {
+    void sendRocket(Rocket rocket) {
         JPanel element = new JPanel();
         this.arenaGUI.addElement(element);
         rocket.setElement(element);
@@ -93,9 +104,9 @@ public class Arena {
 
     /**
      * Explodes the given rocket and handles all corresponding events.
-     * @param rocket
+     * @param rocket The rocket to be exploded.
      */
-    public void explodeRocket(Rocket rocket) {
+    private void explodeRocket(Rocket rocket) {
         this.arenaGUI.animateExplosionOf(rocket.getElement());
         this.robots
                 .stream()
@@ -111,21 +122,11 @@ public class Arena {
 
     /**
      * Kills the robot and removes it from the arena.
-     * @param robot
+     * @param robot The robot to be killed.
      */
-    public void killRobot(Robot robot) {
+    private void killRobot(Robot robot) {
         this.arenaGUI.removeElement(robot.getElement());
-    }
-
-    /**
-     * Returns a random location inside the arena.
-     * @return a random location inside the arena.
-     */
-    private Location getRandomLocation() {
-        Random rand = new Random();
-        int x = rand.nextInt(width);
-        int y = rand.nextInt(height);
-        return new Location(x, y);
+        this.robots.remove(robot);
     }
 
     /**
@@ -135,7 +136,7 @@ public class Arena {
      * @param finishingAngle Finishing angle. Must be larger than startingAngle. (0-360)
      * @return The distance to the closest robot. If no robot is present in the scanned area, returns -1.0.
      */
-    public double getDistanceToClosestRobotFrom(Robot robot, int startingAngle, int finishingAngle) {
+    double getDistanceToClosestRobotFrom(Robot robot, int startingAngle, int finishingAngle) {
         return this.robots
                 .stream()
                 .map(Robot::getLocation)
@@ -144,7 +145,7 @@ public class Arena {
                 .min(Comparator.comparing(Double::valueOf))
                 .orElse(-1.0);
     }
-    
+
     public static void main(String[] args) throws RobotNotLoadedException, InterruptedException {
         Arena arena = new Arena();
 
@@ -154,6 +155,10 @@ public class Arena {
         while(true){
             arena.runRobotsForOneTurn();
             arena.update();
+            if(arena.thereIsAWinner()) {
+                arena.winningSequence();
+                return;
+            }
             Thread.sleep(1000/60);
         }
     }
