@@ -16,7 +16,6 @@ public class Arena {
     private List<Rocket> rockets;
     private @Getter final int width = 500;
     private @Getter final int height = 500;
-    private final int scanningRange = 250;
     private final int rocketExplosionRadius = 25;
     private final int rocketExplosionDamage = 10;
     private ArenaGUI arenaGUI;
@@ -33,16 +32,16 @@ public class Arena {
         this.robots
                 .stream()
                 .forEach(robot -> {
-                    Location newLocation = getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
+                    Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
                     robot.setLocation(newLocation);
                     //damage if collisions
                 });
         this.rockets
                 .stream()
                 .forEach(rocket -> {
-                    Location newLocation = getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
+                    Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
                     rocket.setLocation(newLocation);
-                    if( getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
+                    if( Utils.getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
                         explodeRocket(rocket);
                     }
                 });
@@ -140,41 +139,12 @@ public class Arena {
         return this.robots
                 .stream()
                 .map(Robot::getLocation)
-                .filter(enemyRobotLocation -> isInsideTheScanningArea(robot.getLocation(), startingAngle, finishingAngle, enemyRobotLocation))
-                .map(enemyRobotLocation -> getDistanceBetween(robot.getLocation(), enemyRobotLocation))
+                .filter(enemyRobotLocation -> Utils.isInsideTheScanningArea(robot.getLocation(), startingAngle, finishingAngle, enemyRobotLocation))
+                .map(enemyRobotLocation -> Utils.getDistanceBetween(robot.getLocation(), enemyRobotLocation))
                 .min(Comparator.comparing(Double::valueOf))
                 .orElse(-1.0);
     }
-
-    /**
-     * Checks whether the target location is within the scanned area.
-     * @param scanningSource The source location from where the scan is performed.
-     * @param startingAngle Starting angle. Must be smaller than finishingAngle. (0-360)
-     * @param finishingAngle Finishing angle. Must be larger than startingAngle. (0-360)
-     * @param scanningTarget The target location that is checked.
-     * @return true if the target location is within the scanned area, false otherwise.
-     */
-    private boolean isInsideTheScanningArea(Location scanningSource, int startingAngle, int finishingAngle, Location scanningTarget) {
-        double y = scanningTarget.getY() - scanningSource.getY();
-        double x = scanningTarget.getX() - scanningSource.getX();
-        double angleBetweenPoints = Math.atan2(y, x);
-
-        return angleBetweenPoints > startingAngle &&
-                angleBetweenPoints < finishingAngle &&
-                getDistanceBetween(scanningSource, scanningTarget) <= scanningRange;
-    }
-
-    private double getDistanceBetween(Location location1, Location location2) {
-        return Point2D.distance(location1.getX(), location1.getY(), location2.getX(), location2.getY());
-    }
-
-    private Location getNewLocationBy(Location location, int direction, int speed) {
-        double magnitudeX = Math.cos(Math.toRadians(direction)) * speed;
-        double magnitudeY = Math.sin(Math.toRadians(direction)) * speed;
-
-        return new Location(location.getX() + magnitudeX, location.getY() + magnitudeY);
-    }
-
+    
     public static void main(String[] args) throws RobotNotLoadedException, InterruptedException {
         Arena arena = new Arena();
 
