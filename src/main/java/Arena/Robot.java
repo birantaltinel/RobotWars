@@ -2,8 +2,6 @@ package Arena;
 
 import lombok.*;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @AllArgsConstructor
 public class Robot implements Runnable {
@@ -13,6 +11,7 @@ public class Robot implements Runnable {
     private @Getter(AccessLevel.PROTECTED) Location location;
     private @Setter Arena arena;
     private @Getter JPanel element;
+    private @Getter JPanel info;
 
     private final int maxScanningAngle = 90;
     private final int maxSpeed = 10;
@@ -67,8 +66,8 @@ public class Robot implements Runnable {
 
     private Location calculateTargetLocation(int directionInDegrees, double distance) {
         double directionInRadians = Math.toRadians(directionInDegrees);
-        double targetX = Math.cos(directionInRadians) * distance + location.getX();
-        double targetY = Math.sin(directionInRadians) * distance + location.getY();
+        double targetX = Math.max(Math.min(Math.cos(directionInRadians) * distance + location.getX(), 500), 0);
+        double targetY = Math.max(Math.min(Math.sin(directionInRadians) * distance + location.getY(), 500), 0);
         return new Location(targetX, targetY);
     }
 

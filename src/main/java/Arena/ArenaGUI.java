@@ -1,30 +1,51 @@
 package Arena;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.*;
 
 class ArenaGUI{
-    private final JFrame arena;
+    private final JFrame window;
+    private final Box scoreboard;
+    private final JPanel arena;
 
     ArenaGUI() {
-        arena = new JFrame();
-        arena.getContentPane().setLayout(null);
-        arena.setSize(500,500);
-        arena.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window = new JFrame();
+        window.getContentPane().setLayout(new BoxLayout(window.getContentPane(), BoxLayout.X_AXIS));
+        window.setSize(700, 500);
+        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Timer timer = new Timer(1000/60,new WindowUpdater());
-        timer.start();
-        arena.setVisible(true);
+        arena = new JPanel();
+        arena.setLayout(null);
+        arena.setPreferredSize(new Dimension(500,500));
+        arena.setBackground(Color.WHITE);
+        arena.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        window.add(arena);
+
+        scoreboard = Box.createVerticalBox();
+        scoreboard.setPreferredSize(new Dimension(200,500));
+        scoreboard.setBackground(Color.GRAY);
+        JLabel textArea = new JLabel("Scoreboard");
+        scoreboard.add(textArea);
+        window.add(scoreboard);
+
+        window.setVisible(true);
     }
 
-    void addElement(JPanel element) {
+    void addRobotElement(JPanel element) {
         arena.add(element);
-        element.setBounds(250,250,20,20);
+        element.setSize(20, 20);
         element.setBackground(Color.GREEN);
+
+        JTextArea textArea = new JTextArea("Robot");
+        textArea.setPreferredSize(new Dimension(200, 100));
+        textArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        scoreboard.add(textArea);
+    }
+
+    void addRocketElement(JPanel element) {
+        arena.add(element);
+        element.setSize(5, 5);
+        element.setBackground(Color.RED);
     }
 
     void removeElement(JPanel element) {
@@ -39,13 +60,5 @@ class ArenaGUI{
     void declareWinner(String nameOfTheWinner) {
         // show a message declaring winner
         // stop all other visuals
-    }
-
-    public class WindowUpdater implements ActionListener{
-
-        @Override
-        public void actionPerformed(ActionEvent arg0) {
-        }
-
     }
 }

@@ -29,19 +29,22 @@ public class Arena {
      * Updates the arena to reflect the results of the turn that all robots have played.
      */
     private void update() {
-        this.robots
-                .forEach(robot -> {
-                    Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
-                    robot.setLocation(newLocation);
-                });
-        this.rockets
-                .forEach(rocket -> {
-                    Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
-                    rocket.setLocation(newLocation);
-                    if( Utils.getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
-                        explodeRocket(rocket);
-                    }
-                });
+        for(Robot robot: this.robots) {
+            Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
+            robot.setLocation(newLocation);
+        }
+        for(Rocket rocket : this.rockets ) {
+            Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
+            rocket.setLocation(newLocation);
+            if(Utils.getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
+                explodeRocket(rocket);
+            }
+            for(Robot robot: this.robots) {
+                if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) < 1) {
+                    explodeRocket(rocket);
+                }
+            }
+        }
     }
 
     /**
@@ -67,12 +70,12 @@ public class Arena {
      */
     private void addRobot(String robotFilePath) throws RobotNotLoadedException {
         Robot robot = robotLoader.load(robotFilePath);
+        robot.setArena(this);
 
         JPanel element = new JPanel();
-        this.arenaGUI.addElement(element);
+        robot.setLocation(Utils.getRandomLocation());
+        this.arenaGUI.addRobotElement(element);
         robot.setElement(element);
-        robot.setLocation(Utils.getRandomLocation(width, height));
-        robot.setArena(this);
 
         this.robots.add(robot);
     }
@@ -103,7 +106,7 @@ public class Arena {
      */
     void sendRocket(Rocket rocket) {
         JPanel element = new JPanel();
-        this.arenaGUI.addElement(element);
+        this.arenaGUI.addRocketElement(element);
         rocket.setElement(element);
 
         this.rockets.add(rocket);
@@ -115,15 +118,14 @@ public class Arena {
      */
     private void explodeRocket(Rocket rocket) {
         this.arenaGUI.animateExplosionOf(rocket.getElement());
-        this.robots
-                .stream()
-                .filter(robot -> Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) <= rocketExplosionRadius)
-                .forEach(robot -> {
-                    robot.decreaseHealthBy(rocketExplosionDamage);
-                    if(robot.getHealth() <= 0) {
-                        killRobot(robot);
-                    }
-                });
+        for(Robot robot: this.robots) {
+            if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) <= rocketExplosionRadius) {
+                robot.decreaseHealthBy(rocketExplosionDamage);
+                if(robot.getHealth() <= 0) {
+                    killRobot(robot);
+                }
+            }
+        }
         this.rockets.remove(rocket);
     }
 

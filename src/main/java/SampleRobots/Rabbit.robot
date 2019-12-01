@@ -1,1 +1,1 @@
-System.out.println("I'm a rabbit.");
+move(270, 1);

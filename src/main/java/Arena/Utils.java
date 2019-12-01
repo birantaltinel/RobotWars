@@ -5,6 +5,8 @@ import java.util.Random;
 
 class Utils {
     private static final int scanningRange = 250;
+    private static final int width = 500;
+    private static final int height = 500;
 
     /**
      * Calculates the new location given the current location, direction and the speed
@@ -16,8 +18,9 @@ class Utils {
     static Location getNewLocationBy(Location location, int direction, int speed) {
         double magnitudeX = Math.cos(Math.toRadians(direction)) * speed;
         double magnitudeY = Math.sin(Math.toRadians(direction)) * speed;
-
-        return new Location(location.getX() + magnitudeX, location.getY() + magnitudeY);
+        double newX = Math.max(Math.min(location.getX() + magnitudeX, width), 0);
+        double newY = Math.max(Math.min(location.getY() + magnitudeY, height), 0);
+        return new Location(newX, newY);
     }
 
     /**
@@ -52,7 +55,7 @@ class Utils {
      * Returns a random location inside the arena.
      * @return a random location inside the arena.
      */
-    static Location getRandomLocation(int width, int height) {
+    static Location getRandomLocation() {
         Random rand = new Random();
         int x = rand.nextInt(width);
         int y = rand.nextInt(height);

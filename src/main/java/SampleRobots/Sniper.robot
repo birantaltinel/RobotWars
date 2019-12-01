@@ -1,1 +1,1 @@
-System.out.println("I'm a sniper.");
+fire(90, 400);
