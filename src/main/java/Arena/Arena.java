@@ -55,7 +55,7 @@ public class Arena {
      * @throws RobotNotLoadedException
      */
     public Robot addRobot(String robotFilePath) throws RobotNotLoadedException {
-        Robot robot = robotLoader.inMemoryLoader(robotFilePath);
+        Robot robot = robotLoader.load(robotFilePath);
 
         JPanel element = new JPanel();
         this.arenaGUI.addElement(element);
