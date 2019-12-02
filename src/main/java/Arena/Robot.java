@@ -19,20 +19,14 @@ public class Robot implements Runnable {
 
     public Robot() { }
     /**
-     * Specify the angles(0-359) between which the scan will be performed.
-     * A maximum of 90 degrees can be scanned in 1 turn.
-     * Has a range of 250 meters.
-     *
-     * @param startingAngle  If a value exceeding the 360 is provided, the result of (startingAngle mod 360) will be used.
-     * @param finishingAngle If a value exceeding the 360 is provided, the result of (finishingAngle mod 360) will be used.
+     * Performs a scan within 200 units range of the robot and returns the location of the closest enemy.
      * @return Returns the distance to the closest enemy in the scanned region. If no enemy is present, returns -1.0;
      */
-    final public double scan(int startingAngle, int finishingAngle) {
-        if(Math.abs(startingAngle - finishingAngle) > maxScanningAngle)
-            return arena.getDistanceToClosestRobotFrom(this, startingAngle, startingAngle + maxScanningAngle);
-        if(finishingAngle < startingAngle)
-            return arena.getDistanceToClosestRobotFrom(this, finishingAngle, startingAngle);
-        return arena.getDistanceToClosestRobotFrom(this, startingAngle, finishingAngle);
+    final public double[] scan() {
+        Robot closestRobot = arena.getClosestRobotFrom(this);
+        if(closestRobot == null)
+            return null;
+        return new double[]{closestRobot.getXCoordinate(), closestRobot.getYCoordinate()};
     }
 
     /**
@@ -47,19 +41,17 @@ public class Robot implements Runnable {
     }
 
     /**
-     * Fires a missile towards the given direction and distance. If the cannon has not finished reloading yet, this function does nothing.
-     *
-     * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
-     * @param distance  The maximum distance is 250 meters. If the given value exceeds the maximum, the distance will be adjusted as 250.
+     * Fires a missile towards the given location. The missile is not fired if the location is beyond the range.
+     * @param targetX the x coordinate of the target.
+     * @param targetY the y coordinate of the target.
      */
-    final public void fire(int direction, double distance) {
+    final public void fire(double targetX, double targetY) {
         if(!isCannonReloaded())
             return;
 
-        int correctedDirection = direction % 360;
-        double correctedDistance = distance % maxRocketDistance;
-        Location target = calculateTargetLocation(correctedDirection, correctedDistance);
-        Rocket rocket = new Rocket(correctedDirection, location, target, this);
+        double direction = Utils.angleBetweenPoints(location, new Location(targetX, targetY));
+        Location target = new Location(targetX, targetY);
+        Rocket rocket = new Rocket(direction, location, target, this);
 
         arena.sendRocket(rocket);
     }

@@ -2,14 +2,9 @@ double x = getXCoordinate();
 double y = getYCoordinate();
 
 if(x == 0 && y == 0) {
-    int scanDegree = 0;
-    while(scanDegree <= 90) {
-        double distance = scan(scanDegree, scanDegree);
-        if(distance != -1) {
-            fire(scanDegree, distance);
-            return;
-        }
-        scanDegree += 1;
+    double[] enemyCoordinates = scan();
+    if(enemyCoordinates != null) {
+        fire(enemyCoordinates[0], enemyCoordinates[1]);
     }
 }
 

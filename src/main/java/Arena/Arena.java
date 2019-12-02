@@ -3,6 +3,8 @@ package Arena;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
+
 import Arena.Exceptions.RobotNotLoadedException;
 import lombok.Getter;
 
@@ -139,20 +141,28 @@ public class Arena {
     }
 
     /**
-     * Finds the distance to the smaller robot in the arena from the given robot.
+     * Finds the distance to the closest robot in the arena from the given robot within the range.
      * @param robot The Robot object for which the search will be performed.
-     * @param startingAngle Starting angle. Must be smaller than finishingAngle. (0-360)
-     * @param finishingAngle Finishing angle. Must be larger than startingAngle. (0-360)
      * @return The distance to the closest robot. If no robot is present in the scanned area, returns -1.0.
      */
-    double getDistanceToClosestRobotFrom(Robot robot, int startingAngle, int finishingAngle) {
-        return this.robots
+    Robot getClosestRobotFrom(Robot robot) {
+         List<Robot> robotsInRange = this.robots
                 .stream()
-                .map(Robot::getLocation)
-                .filter(enemyRobotLocation -> Utils.isInsideTheScanningArea(robot.getLocation(), startingAngle, finishingAngle, enemyRobotLocation))
-                .map(enemyRobotLocation -> Utils.getDistanceBetween(robot.getLocation(), enemyRobotLocation))
-                .min(Comparator.comparing(Double::valueOf))
-                .orElse(-1.0);
+                .filter(enemyRobot -> Utils.isInsideTheScanningArea(robot.getLocation(), enemyRobot.getLocation()))
+                .collect(Collectors.toList());
+         if(robotsInRange.isEmpty())
+             return null;
+
+         Robot closestRobot = robotsInRange.get(0);
+         double closestDistance = Utils.getDistanceBetween(robot.getLocation(), closestRobot.getLocation());
+         for(Robot robotInRange : robotsInRange) {
+             double distance = Utils.getDistanceBetween(robot.getLocation(), robotInRange.getLocation());
+             if(distance < closestDistance) {
+                 closestRobot = robotInRange;
+                 closestDistance = distance;
+             }
+         }
+         return closestRobot;
     }
 
     public static void main(String[] args) throws RobotNotLoadedException, InterruptedException {

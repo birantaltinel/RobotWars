@@ -15,7 +15,7 @@ class Utils {
      * @param speed The speed.
      * @return The new location.
      */
-    static Location getNewLocationBy(Location location, int direction, int speed) {
+    static Location getNewLocationBy(Location location, double direction, int speed) {
         double magnitudeX = Math.cos(Math.toRadians(direction)) * speed;
         double magnitudeY = Math.sin(Math.toRadians(direction)) * speed;
         double newX = Math.max(Math.min(location.getX() + magnitudeX, width), 0);
@@ -26,19 +26,17 @@ class Utils {
     /**
      * Checks whether the target location is within the scanned area.
      * @param scanningSource The source location from where the scan is performed.
-     * @param startingAngle Starting angle. Must be smaller than finishingAngle. (0-360)
-     * @param finishingAngle Finishing angle. Must be larger than startingAngle. (0-360)
      * @param scanningTarget The target location that is checked.
      * @return true if the target location is within the scanned area, false otherwise.
      */
-    static boolean isInsideTheScanningArea(Location scanningSource, int startingAngle, int finishingAngle, Location scanningTarget) {
-        double y = scanningTarget.getY() - scanningSource.getY();
-        double x = scanningTarget.getX() - scanningSource.getX();
-        double angleBetweenPoints = Math.atan2(y, x);
+    static boolean isInsideTheScanningArea(Location scanningSource, Location scanningTarget) {
+        return getDistanceBetween(scanningSource, scanningTarget) <= scanningRange;
+    }
 
-        return angleBetweenPoints >= startingAngle &&
-                angleBetweenPoints <= finishingAngle &&
-                getDistanceBetween(scanningSource, scanningTarget) <= scanningRange;
+    static double angleBetweenPoints(Location source, Location target) {
+        double y = target.getY() - source.getY();
+        double x = target.getX() - source.getX();
+        return Math.atan2(y, x);
     }
 
     /**

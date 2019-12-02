@@ -5,7 +5,7 @@ import javax.swing.*;
 
 @Getter
 class Rocket {
-    private final int direction;
+    private final double direction;
     private final int speed = 2;
     private Location location;
     private Location target;
@@ -13,7 +13,7 @@ class Rocket {
     private JPanel element;
 
     Rocket(
-            int direction,
+            double direction,
             Location location,
             Location target,
             Robot sender
