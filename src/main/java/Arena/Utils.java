@@ -36,8 +36,8 @@ class Utils {
         double x = scanningTarget.getX() - scanningSource.getX();
         double angleBetweenPoints = Math.atan2(y, x);
 
-        return angleBetweenPoints > startingAngle &&
-                angleBetweenPoints < finishingAngle &&
+        return angleBetweenPoints >= startingAngle &&
+                angleBetweenPoints <= finishingAngle &&
                 getDistanceBetween(scanningSource, scanningTarget) <= scanningRange;
     }
 
