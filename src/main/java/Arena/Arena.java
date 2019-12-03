@@ -66,6 +66,13 @@ public class Arena {
     }
 
     /**
+     * Executes the draw sequence after the match is declared as a draw.
+     */
+    private void drawSequence() {
+        this.arenaGUI.declareDraw();
+    }
+
+    /**
      * Loads and initializes a robot from the given file system path to the robot description file.
      * @param robotFilePath Path to the robot file written in the custom robot language.
      * @throws RobotNotLoadedException If the dynamic class loader fails to load the robot file, this exception will be thrown.
@@ -171,7 +178,7 @@ public class Arena {
         for(String robotFilePath: args)
             arena.addRobot(robotFilePath);
 
-        while(true){
+        for(int turn=0; turn < 5000; turn++){
             arena.runRobotsForOneTurn();
             arena.update();
             if(arena.thereIsAWinner()) {
@@ -180,5 +187,7 @@ public class Arena {
             }
             Thread.sleep(1000/60);
         }
+
+        arena.drawSequence();
     }
 }

@@ -61,4 +61,9 @@ class ArenaGUI{
         // show a message declaring winner
         // stop all other visuals
     }
+
+    void declareDraw() {
+        // show a message declaring winner
+        // stop all other visuals
+    }
 }
