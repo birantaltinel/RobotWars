@@ -1,1 +1,1 @@
-move(270, 1);
+move(Math.random()*360, 1);

@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 class Utils {
-    private static final int scanningRange = 250;
+    private static final int scanningRange = 500; //change this back to 250 later
     private static final int width = 500;
     private static final int height = 500;
 
@@ -36,7 +36,7 @@ class Utils {
     static double angleBetweenPoints(Location source, Location target) {
         double y = target.getY() - source.getY();
         double x = target.getX() - source.getX();
-        return Math.atan2(y, x);
+        return Math.toDegrees(Math.atan2(y, x));
     }
 
     /**

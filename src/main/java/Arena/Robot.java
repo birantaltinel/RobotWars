@@ -6,7 +6,7 @@ import javax.swing.*;
 @AllArgsConstructor
 public class Robot implements Runnable {
     private int health = 100;
-    private int direction = 0;
+    private double direction = 0;
     private int speed = 0;
     private @Getter(AccessLevel.PROTECTED) Location location;
     private @Setter Arena arena;
@@ -35,7 +35,7 @@ public class Robot implements Runnable {
      * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
      * @param speed     If a value exceeding the maximum speed of 10 is provided, the speed will be adjusted as 10.
      */
-    final public void move(int direction, int speed) {
+    final public void move(double direction, int speed) {
         this.direction = direction % 360;
         this.speed = speed % maxSpeed;
     }
@@ -87,7 +87,7 @@ public class Robot implements Runnable {
     /**
      * @return The current direction of the robot in degrees. (0-359)
      */
-    final public int getDirection() {
+    final public double getDirection() {
         return direction;
     }
 

@@ -8,12 +8,12 @@ if(x == 0 && y == 0) {
     }
 }
 
-else if(x != 0) {
-    move(270, 10);
+else if(y != 0) {
+    move(270, 1);
 }
 
 else {
-    move(180, 10);
+    move(180, 1);
 }
 
 
