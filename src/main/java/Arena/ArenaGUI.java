@@ -7,6 +7,7 @@ class ArenaGUI{
     private final JFrame window;
     private final Box scoreboard;
     private final JPanel arena;
+    private final JTextArea turns;
 
     ArenaGUI() {
         window = new JFrame();
@@ -16,30 +17,45 @@ class ArenaGUI{
 
         arena = new JPanel();
         arena.setLayout(null);
-        arena.setPreferredSize(new Dimension(500,500));
+        arena.setPreferredSize(new Dimension(520,520));
         arena.setBackground(Color.WHITE);
         arena.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         window.add(arena);
 
         scoreboard = Box.createVerticalBox();
-        scoreboard.setPreferredSize(new Dimension(200,500));
+        scoreboard.setPreferredSize(new Dimension(250,520));
         scoreboard.setBackground(Color.GRAY);
         JLabel textArea = new JLabel("Scoreboard");
         scoreboard.add(textArea);
+        this.turns = new JTextArea("turn: 0");
+        scoreboard.add(turns);
         window.add(scoreboard);
 
         window.setVisible(true);
     }
 
-    void addRobotElement(JPanel element) {
+    JPanel addRobotElement() {
+        JPanel element = new JPanel();
+
         arena.add(element);
         element.setSize(20, 20);
         element.setBackground(Color.GREEN);
 
-        JTextArea textArea = new JTextArea("Robot");
-        textArea.setPreferredSize(new Dimension(200, 100));
-        textArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        scoreboard.add(textArea);
+        return element;
+    }
+
+    JTextArea addRobotInfoToScoreboard(String robotName) {
+        JPanel robotInfoArea = new JPanel();
+        robotInfoArea.setPreferredSize(new Dimension(200, 100));
+        robotInfoArea.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+
+        JTextArea title = new JTextArea(robotName);
+        JTextArea info = new JTextArea();
+
+        robotInfoArea.add(title);
+        robotInfoArea.add(info);
+        scoreboard.add(robotInfoArea);
+        return info;
     }
 
     void addRocketElement(JPanel element) {
@@ -52,18 +68,36 @@ class ArenaGUI{
         this.arena.remove(element);
     }
 
+    void updateTurns(int turn) {
+        this.turns.setText(String.format("turn: %d", turn));
+    }
+
     void animateExplosionOf(JPanel element) {
         //do some basic animation here
         this.arena.remove(element);
     }
 
     void declareWinner(String nameOfTheWinner) {
-        // show a message declaring winner
-        // stop all other visuals
+        JTextArea winner = new JTextArea(String.format("WINNER: %s", nameOfTheWinner));
+        winner.setPreferredSize(new Dimension(200, 100));
+        winner.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        winner.setBackground(Color.GREEN);
+
+        JFrame winnerDialog = new JFrame();
+        winnerDialog.add(winner);
+        winnerDialog.setSize(200,100);
+        winnerDialog.setVisible(true);
     }
 
     void declareDraw() {
-        // show a message declaring winner
-        // stop all other visuals
+        JTextArea winner = new JTextArea("IT'S A DRAW");
+        winner.setPreferredSize(new Dimension(200, 100));
+        winner.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        winner.setBackground(Color.GRAY);
+
+        JFrame winnerDialog = new JFrame();
+        winnerDialog.add(winner);
+        winnerDialog.setSize(200,100);
+        winnerDialog.setVisible(true);
     }
 }

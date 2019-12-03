@@ -59,4 +59,12 @@ class Utils {
         int y = rand.nextInt(height);
         return new Location(x, y);
     }
+
+    static String getRobotInfoDisplayText(Robot robot) {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("x: %d  y: %d\n", (int)robot.getLocation().getX(), (int)robot.getLocation().getY()));
+        sb.append(String.format("health: %d\n", robot.getHealth()));
+        sb.append(String.format("speed: %d  direction: %d", robot.getSpeed(), (int)robot.getDirection()));
+        return sb.toString();
+    }
 }

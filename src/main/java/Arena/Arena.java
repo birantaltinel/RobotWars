@@ -34,19 +34,24 @@ public class Arena {
         for(Robot robot: this.robots) {
             Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
             robot.setLocation(newLocation);
+            robot.getInfo().setText(Utils.getRobotInfoDisplayText(robot));
         }
+        List<Rocket> rocketsToBeRemoved = new ArrayList<>();
         for(Rocket rocket : this.rockets ) {
             Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
             rocket.setLocation(newLocation);
             if(Utils.getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
                 explodeRocket(rocket);
+                rocketsToBeRemoved.add(rocket);
             }
             for(Robot robot: this.robots) {
                 if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) < 1) {
                     explodeRocket(rocket);
+                    rocketsToBeRemoved.add(rocket);
                 }
             }
         }
+        rocketsToBeRemoved.forEach(rocket -> this.rockets.remove(rocket));
     }
 
     /**
@@ -62,7 +67,7 @@ public class Arena {
      */
     private void winningSequence() {
         Robot winner = this.robots.get(0);
-        this.arenaGUI.declareWinner(winner.getClass().getName());
+        this.arenaGUI.declareWinner(winner.getClass().getSimpleName());
     }
 
     /**
@@ -81,10 +86,9 @@ public class Arena {
         Robot robot = robotLoader.load(robotFilePath);
         robot.setArena(this);
 
-        JPanel element = new JPanel();
         robot.setLocation(Utils.getRandomLocation());
-        this.arenaGUI.addRobotElement(element);
-        robot.setElement(element);
+        robot.setElement(this.arenaGUI.addRobotElement());
+        robot.setInfo(this.arenaGUI.addRobotInfoToScoreboard(robot.getClass().getSimpleName()));
 
         this.robots.add(robot);
     }
@@ -127,15 +131,17 @@ public class Arena {
      */
     private void explodeRocket(Rocket rocket) {
         this.arenaGUI.animateExplosionOf(rocket.getElement());
+        List<Robot> robotsToRemove = new ArrayList<>();
         for(Robot robot: this.robots) {
             if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) <= rocketExplosionRadius) {
                 robot.decreaseHealthBy(rocketExplosionDamage);
                 if(robot.getHealth() <= 0) {
                     killRobot(robot);
+                    robotsToRemove.add(robot);
                 }
             }
         }
-        this.rockets.remove(rocket);
+        robotsToRemove.forEach(robot -> this.robots.remove(robot));
     }
 
     /**
@@ -144,7 +150,6 @@ public class Arena {
      */
     private void killRobot(Robot robot) {
         this.arenaGUI.removeElement(robot.getElement());
-        this.robots.remove(robot);
     }
 
     /**
@@ -155,7 +160,7 @@ public class Arena {
     Robot getClosestRobotFrom(Robot robot) {
          List<Robot> robotsInRange = this.robots
                 .stream()
-                .filter(enemyRobot -> Utils.isInsideTheScanningArea(robot.getLocation(), enemyRobot.getLocation()))
+                .filter(enemyRobot -> Utils.isInsideTheScanningArea(robot.getLocation(), enemyRobot.getLocation()) && enemyRobot != robot)
                 .collect(Collectors.toList());
          if(robotsInRange.isEmpty())
              return null;
@@ -179,6 +184,7 @@ public class Arena {
             arena.addRobot(robotFilePath);
 
         for(int turn=0; turn < 5000; turn++){
+            arena.arenaGUI.updateTurns(turn);
             arena.runRobotsForOneTurn();
             arena.update();
             if(arena.thereIsAWinner()) {

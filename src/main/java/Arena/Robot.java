@@ -11,7 +11,7 @@ public class Robot implements Runnable {
     private @Getter(AccessLevel.PROTECTED) Location location;
     private @Setter Arena arena;
     private @Getter JPanel element;
-    private @Getter JPanel info;
+    private @Getter @Setter JTextArea info;
 
     private final int maxScanningAngle = 90;
     private final int maxSpeed = 10;
