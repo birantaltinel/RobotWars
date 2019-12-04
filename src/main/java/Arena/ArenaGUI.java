@@ -91,6 +91,7 @@ class ArenaGUI{
      */
     void removeElement(JTextArea info) {
         Container infoArea = info.getParent();
+        infoArea.setVisible(false);
         this.arena.remove(infoArea);
     }
 
@@ -101,34 +102,6 @@ class ArenaGUI{
     void updateTurns(int turn) {
         this.turns.setText(String.format("turn: %d", turn));
     }
-
-//    void animateExplosionOf(JPanel element) {
-//        removeElement(element);
-//
-//        JPanel animation = new JPanel();
-//        this.arena.add(animation);
-//        animation.setSize(25, 25);
-//        animation.setBackground(Color.RED);
-//        animation.setLocation(element.getLocation());
-//
-//        Timer timer = new Timer(20, new AnimateExplosion(animation));
-//        timer.start();
-//        removeElement(animation);
-//    }
-
-//    public class AnimateExplosion implements ActionListener {
-//        private JPanel animation;
-//
-//        public AnimateExplosion(JPanel animation){
-//            this.animation = animation;
-//        }
-//
-//        @Override
-//        public void actionPerformed(ActionEvent event) {
-//            this.animation.setBackground(animation.getBackground() == Color.RED ? Color.YELLOW : Color.RED);
-//        }
-//
-//    }
 
     /**
      * The GUI function that opens a popup window declaring the winner robot of the battle.

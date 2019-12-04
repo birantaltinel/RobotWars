@@ -48,14 +48,6 @@ public class Arena {
                 explodeRocket(rocket);
                 rocketIterator.remove();
             }
-//            Iterator<Robot> robotIteratorForRockets = this.robots.iterator();
-//            while(robotIteratorForRockets.hasNext()) {
-//                Robot robot = robotIteratorForRockets.next();
-//                if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) < 1) {
-//                    explodeRocket(rocket);
-//                    rocketIterator.remove();
-//                }
-//            }
         }
     }
 
