@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 class Utils {
-    private static final int scanningRange = 500; //change this back to 250 later
+    private static final int scanningRange = 500;
     private static final int width = 500;
     private static final int height = 500;
 
@@ -60,6 +60,11 @@ class Utils {
         return new Location(x, y);
     }
 
+    /**
+     * Builds the scoreboard info box content for the robot that will be displayed.
+     * @param robot The robot for which the content will be built.
+     * @return The built content represented as a string.
+     */
     static String getRobotInfoDisplayText(Robot robot) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("x: %d  y: %d\n", (int)robot.getLocation().getX(), (int)robot.getLocation().getY()));

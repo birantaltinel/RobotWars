@@ -1,7 +1,7 @@
 package Arena;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,27 +31,32 @@ public class Arena {
      * Updates the arena to reflect the results of the turn that all robots have played.
      */
     private void update() {
-        for(Robot robot: this.robots) {
+        Iterator<Robot> robotIterator = this.robots.iterator();
+        while(robotIterator.hasNext()) {
+            Robot robot = robotIterator.next();
             Location newLocation = Utils.getNewLocationBy(robot.getLocation(), robot.getDirection(), robot.getSpeed());
             robot.setLocation(newLocation);
             robot.getInfo().setText(Utils.getRobotInfoDisplayText(robot));
         }
-        List<Rocket> rocketsToBeRemoved = new ArrayList<>();
-        for(Rocket rocket : this.rockets ) {
+
+        Iterator<Rocket> rocketIterator = this.rockets.iterator();
+        while(rocketIterator.hasNext()) {
+            Rocket rocket = rocketIterator.next();
             Location newLocation = Utils.getNewLocationBy(rocket.getLocation(), rocket.getDirection(), rocket.getSpeed());
             rocket.setLocation(newLocation);
             if(Utils.getDistanceBetween(rocket.getLocation(), rocket.getTarget()) < 1) {
                 explodeRocket(rocket);
-                rocketsToBeRemoved.add(rocket);
+                rocketIterator.remove();
             }
-            for(Robot robot: this.robots) {
-                if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) < 1) {
-                    explodeRocket(rocket);
-                    rocketsToBeRemoved.add(rocket);
-                }
-            }
+//            Iterator<Robot> robotIteratorForRockets = this.robots.iterator();
+//            while(robotIteratorForRockets.hasNext()) {
+//                Robot robot = robotIteratorForRockets.next();
+//                if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) < 1) {
+//                    explodeRocket(rocket);
+//                    rocketIterator.remove();
+//                }
+//            }
         }
-        rocketsToBeRemoved.forEach(rocket -> this.rockets.remove(rocket));
     }
 
     /**
@@ -130,26 +135,28 @@ public class Arena {
      * @param rocket The rocket to be exploded.
      */
     private void explodeRocket(Rocket rocket) {
-        this.arenaGUI.animateExplosionOf(rocket.getElement());
-        List<Robot> robotsToRemove = new ArrayList<>();
-        for(Robot robot: this.robots) {
+        this.arenaGUI.removeElement(rocket.getElement());
+
+        Iterator<Robot> robotIterator = this.robots.iterator();
+        while(robotIterator.hasNext()) {
+            Robot robot = robotIterator.next();
             if(Utils.getDistanceBetween(rocket.getLocation(), robot.getLocation()) <= rocketExplosionRadius) {
                 robot.decreaseHealthBy(rocketExplosionDamage);
                 if(robot.getHealth() <= 0) {
-                    killRobot(robot);
-                    robotsToRemove.add(robot);
+                    removeRobotFromGUI(robot);
+                    robotIterator.remove();
                 }
             }
         }
-        robotsToRemove.forEach(robot -> this.robots.remove(robot));
     }
 
     /**
      * Kills the robot and removes it from the arena.
      * @param robot The robot to be killed.
      */
-    private void killRobot(Robot robot) {
+    private void removeRobotFromGUI(Robot robot) {
         this.arenaGUI.removeElement(robot.getElement());
+        this.arenaGUI.removeElement(robot.getInfo());
     }
 
     /**

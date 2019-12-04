@@ -13,9 +13,9 @@ public class Robot implements Runnable {
     private @Getter JPanel element;
     private @Getter @Setter JTextArea info;
 
-    private final int maxScanningAngle = 90;
+    //private final int maxScanningAngle = 90;
     private final int maxSpeed = 10;
-    private final int maxRocketDistance = 250;
+    //private final int maxRocketDistance = 250;
 
     public Robot() { }
     /**
@@ -56,12 +56,12 @@ public class Robot implements Runnable {
         arena.sendRocket(rocket);
     }
 
-    private Location calculateTargetLocation(int directionInDegrees, double distance) {
-        double directionInRadians = Math.toRadians(directionInDegrees);
-        double targetX = Math.max(Math.min(Math.cos(directionInRadians) * distance + location.getX(), 500), 0);
-        double targetY = Math.max(Math.min(Math.sin(directionInRadians) * distance + location.getY(), 500), 0);
-        return new Location(targetX, targetY);
-    }
+//    private Location calculateTargetLocation(int directionInDegrees, double distance) {
+//        double directionInRadians = Math.toRadians(directionInDegrees);
+//        double targetX = Math.max(Math.min(Math.cos(directionInRadians) * distance + location.getX(), 500), 0);
+//        double targetY = Math.max(Math.min(Math.sin(directionInRadians) * distance + location.getY(), 500), 0);
+//        return new Location(targetX, targetY);
+//    }
 
     /**
      * @return True if the cannon has finished reloading and can fire another missile. False otherwise.

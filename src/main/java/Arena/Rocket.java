@@ -11,7 +11,6 @@ class Rocket {
     private Location target;
     private Robot sender;
     private JPanel element;
-    private @Getter boolean exploded;
 
     Rocket(
             double direction,
