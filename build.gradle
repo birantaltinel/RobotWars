@@ -5,7 +5,10 @@ plugins {
 
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 application {
     mainClassName = 'Arena.Arena'

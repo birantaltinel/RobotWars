@@ -49,22 +49,42 @@ The game is implemented in Java 11, with the following libraries and tools:
 * Lombok, to generate boilerplate code at compile time to keep development clean and fast.
 * Openhft CompilerUtils, to dynamically compile and load code into the memory.
 
-### Architectural and Design choices
+### Architectural Choices and Implementation Tradeoffs
 
 I made the choices that I saw necessary in order to quickly build a playable MVP version
-in the limited time that I had.
+in the limited time that I had, meanwhile trying to keep a well software structure which is maintainable
+and extendable.
 
 * I chose to use the Swing library instead of going ASCII style, because it was convenient enough to quickly
 build a GUI with basic components and animation. The best part is the fact that it's quite easy to
 quickly extend and enrich the interface of the game, using the hierarchical structure of Swing
 that makes it really easy to add, remove and animate visual components.
 * I chose the robot language to be the subset of the Java language, because in this way I could both
-be able to make use of dynamically loading code and build the application in short amount of time.
+be able to make use of dynamically loading code and build the application in short amount of time. 
 * I tried to employ good object-oriented practices in order to have the possibility of
 more easily extending the game with new types of entities, even though I must admit I didn't
 have time to use enough design patterns.
 * I chose to make the coordinate system start from the upper-left corner as the Swing library
 to avoid extending the development time.
+* Simplify the game logic as much as possible in order to make it possible for Robot AI developers to easily write Robot AI, and focus on
+strategies instead of geometric calculations.
+
+### Things to improve
+
+The game is quite basic in its mechanics and the visual representation if far from stunning.
+However, if I had more time, there are certainly things that I would improve.
+
+* Instead of forcing the robot programmers to implement a strategy for every turn, I would let them
+implement the logic for the entire duration of the battle and handle the robot programs through a simulation
+of the computer resources as can be found in CRobots and similar projects.
+* Handling different speeds for robots and rockets is quite buggy, and this would be one
+of the first things I would improve after the major change mentioned in the previous point.
+* Implementing more realistic physical interactions; such as crashing into each other, acceleration,
+more realistic cannon reloading etc.
+* I would definitely improve the UI to create a better representation of the battle which makes it
+easier to understand what's going on in the battlefield.
+* I would base all variables in configuration files in order to quickly adjust various settings.
+* Create a security mechanism that prevents the dynamically loaded code to access the forbidden resources.
 
 ## Running Instructions
 
@@ -78,12 +98,12 @@ Please download and install the following before going through the step-by-step 
 ### Step-by-step instructions
 * Place the robot files you'd like to run inside **Robots** folder within the project. 
 Please put a maximum of 4 robot files as it's not yet tested with more than 4 robots.
-* Open the terminal/command line.
+* Open the terminal/command prompt.
 * Set default JDK version to 11.
   * **On MacOS**:
-  > export JAVA_HOME= /usr/libexec/java_home -v 11
-  * **On Windows**, locate your Java installation directory and run:
-  > setx -m JAVA_HOME \<java installation directory\>"
+    > export JAVA_HOME= /usr/libexec/java_home -v 11
+  * **On Windows**, please follow the following tutorial:
+    <https://javatutorial.net/set-java-home-windows-10>
   * **On Linux**:
     * Find the java installation path by running
       > update-alternatives --config java
@@ -92,9 +112,9 @@ Please put a maximum of 4 robot files as it's not yet tested with more than 4 ro
       > export JAVA_HOME
     * Save and exit. Lastly run the following command to reload the system PATH:
       > . /etc/environment
-* Navigate to the project folder within the terminal.
+* Navigate to the project folder within the terminal/command prompt.
 * Lastly, run:
-> gradle clean build run
+    > gradle clean build run
 
 The application should compile and start the battle automatically 
 after running the last command.
@@ -133,7 +153,7 @@ The robot language is a strict subset of the standard Java language. It consists
 
 The content of the Robot AI file should describe the actions a robot will make ***at each turn***. 
 This means that this code will be invoked at every turn for every robot in the battlefield. 
-If the robot code for the turn exceeds the timeout of 5 milliseconds,
+If the robot code for the turn exceeds the timeout of 20 milliseconds,
 the robot will be kicked out of battle.
 
 The extension of the robot AI description file must be **.robot** such as **Destroyer.robot** without any spaces in the name.
@@ -144,7 +164,7 @@ The custom robot functions available to the programmers are:
   * **parameters***: none.
   * **returns***: double[], containing the location of the closest enemy with the x coordinate at index 0, and the y coordinate at index 1. It returns **null** if no robot is found within the scanning range.
 
-* ***void move(double direction, int speed)*** : Starts moving the robot in the given direction(0-359) with the given speed(0-2).
+* ***void move(double direction, int speed)*** : Starts moving the robot in the given direction(0-359) with the given speed(0 or 1).
   * **parameters**: direction in angles as a double, and the speed as an int.
   * **returns**: void.
 
@@ -162,7 +182,7 @@ The custom robot functions available to the programmers are:
 
 * ***int getSpeed()*** : Retrieves the current speed of the robot.
   * **parameters**: none.
-  * **returns**: The current speed of the robot, which is minimum 0 and maximum 2.
+  * **returns**: The current speed of the robot, which is either 0 or 1.
 
 * ***double getDirection()*** : Retrieves the direction the robot is currently facing in the coordinate system in degrees.
   * **parameters**: none.
@@ -176,4 +196,5 @@ The custom robot functions available to the programmers are:
   * **parameters**: none.
   * **returns**: y coordinate of the robot as a double.
 
-Using these functions and the standard Java syntax, and optionally the various structures available in the **java.lang** package; the programm
+Using these functions and the standard Java syntax, and optionally the various structures available in the **java.lang** package; the programmers can
+create a robot AI.

@@ -104,7 +104,7 @@ public class Arena {
             final ExecutorService executor = Executors.newSingleThreadExecutor();
             final Future future = executor.submit(robot);
             try {
-                future.get(5, TimeUnit.MILLISECONDS);
+                future.get(20, TimeUnit.MILLISECONDS);
             } catch(TimeoutException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
                 removeRobotFromGUI(robot);

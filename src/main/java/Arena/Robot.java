@@ -30,10 +30,10 @@ public class Robot implements Runnable {
     }
 
     /**
-     * Starts moving the robot in the given direction(0-359) with the given speed(0-10).
+     * Starts moving the robot in the given direction(0-359) with the given speed(0 or 1).
      *
      * @param direction If a value exceeding the maximum angle is provided, the result of (direction mod 360) will be used.
-     * @param speed     If a value exceeding the maximum speed of 10 is provided, the speed will be adjusted as 10.
+     * @param speed     If 1 is provided, the robot will move. If 0 is provided, the robot will stop moving.
      */
     final public void move(double direction, int speed) {
         this.direction = direction % 360;
