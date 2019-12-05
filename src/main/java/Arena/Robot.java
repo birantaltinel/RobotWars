@@ -14,13 +14,13 @@ public class Robot implements Runnable {
     private @Getter @Setter JTextArea info;
 
     //private final int maxScanningAngle = 90;
-    private final int maxSpeed = 10;
+    private final int maxSpeed = 2;
     //private final int maxRocketDistance = 250;
 
     public Robot() { }
     /**
-     * Performs a scan within 200 units range of the robot and returns the location of the closest enemy.
-     * @return Returns the distance to the closest enemy in the scanned region. If no enemy is present, returns -1.0;
+     * Performs a scan within 300 units range of the robot and returns the location of the closest enemy.
+     * @return Returns the distance to the closest enemy in the scanned region. If no enemy is present, returns null;
      */
     final public double[] scan() {
         Robot closestRobot = arena.getClosestRobotFrom(this);
@@ -41,7 +41,7 @@ public class Robot implements Runnable {
     }
 
     /**
-     * Fires a missile towards the given location. The missile is not fired if the location is beyond the range.
+     * Fires a missile towards the given location. The missile is not fired if the location is beyond the range or if the cannon is not reloaded yet.
      * @param targetX the x coordinate of the target.
      * @param targetY the y coordinate of the target.
      */
@@ -55,13 +55,6 @@ public class Robot implements Runnable {
 
         arena.sendRocket(rocket);
     }
-
-//    private Location calculateTargetLocation(int directionInDegrees, double distance) {
-//        double directionInRadians = Math.toRadians(directionInDegrees);
-//        double targetX = Math.max(Math.min(Math.cos(directionInRadians) * distance + location.getX(), 500), 0);
-//        double targetY = Math.max(Math.min(Math.sin(directionInRadians) * distance + location.getY(), 500), 0);
-//        return new Location(targetX, targetY);
-//    }
 
     /**
      * @return True if the cannon has finished reloading and can fire another missile. False otherwise.

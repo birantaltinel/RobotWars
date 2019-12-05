@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 class Utils {
-    private static final int scanningRange = 500;
+    private static final int scanningRange = 300;
     private static final int width = 500;
     private static final int height = 500;
 

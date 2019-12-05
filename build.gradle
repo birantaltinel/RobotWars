@@ -16,4 +16,5 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.10'
     compile 'net.openhft:compiler:2.3.4'
     compile 'org.slf4j:slf4j-simple:1.6.4'
+    compile 'org.apache.commons:commons-lang3:3.6'
 }

@@ -2,6 +2,8 @@ package Arena;
 
 import Arena.Exceptions.RobotNotLoadedException;
 import net.openhft.compiler.CompilerUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
@@ -16,7 +18,7 @@ public class RobotLoader {
      */
     public Robot load(String robotFilePath) throws RobotNotLoadedException {
         Path path = Paths.get(robotFilePath);
-        String robotName = path.getFileName().toString().split("\\.")[0];
+        String robotName = StringUtils.capitalize(path.getFileName().toString().split("\\.")[0]);
         try {
             String robotFile = new Scanner(new File(robotFilePath)).useDelimiter("\\Z").next();
 
