@@ -3,6 +3,7 @@ package Arena;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import Arena.Exceptions.RobotNotLoadedException;
@@ -94,8 +95,19 @@ public class Arena {
      * Calls all the custom robot codes that will run for one turn. This function should be called once every turn.
      */
     private void runRobotsForOneTurn() {
-        this.robots
-                .forEach(Robot::run);
+        Iterator<Robot> robotIterator = this.robots.iterator();
+        while(robotIterator.hasNext()) {
+            Robot robot = robotIterator.next();
+            final ExecutorService executor = Executors.newSingleThreadExecutor();
+            final Future future = executor.submit(robot);
+            try {
+                future.get(100, TimeUnit.MILLISECONDS);
+            } catch(TimeoutException | InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                removeRobotFromGUI(robot);
+                robotIterator.remove();
+            }
+        }
     }
 
     /**

@@ -4,7 +4,7 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 
 class Utils {
-    private static final int scanningRange = 300;
+    private static final int scanningRange = 500;
     private static final int width = 500;
     private static final int height = 500;
 
@@ -46,7 +46,13 @@ class Utils {
      * @return The distance between the locations as a double.
      */
     static double getDistanceBetween(Location location1, Location location2) {
+        /*double loc1X = Math.max(Math.min(location1.getX(), width), 0);
+        double loc1Y = Math.max(Math.min(location1.getY(), height), 0);
+        double loc2X = Math.max(Math.min(location2.getX(), width), 0);
+        double loc2Y = Math.max(Math.min(location2.getX(), height), 0);
+        return Point2D.distance(loc1X, loc1Y, loc2X, loc2Y);*/
         return Point2D.distance(location1.getX(), location1.getY(), location2.getX(), location2.getY());
+
     }
 
     /**
