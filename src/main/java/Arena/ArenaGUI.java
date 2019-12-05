@@ -100,7 +100,7 @@ class ArenaGUI{
      * @param turn
      */
     void updateTurns(int turn) {
-        this.turns.setText(String.format("turn: %d", turn));
+        this.turns.setText(String.format("turn: %d / 5000", turn));
     }
 
     /**

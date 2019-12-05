@@ -70,12 +70,14 @@ to avoid extending the development time.
 
 ### Prerequisites
 
-Please download and install the following before going through the instructions:
+Please download and install the following before going through the step-by-step instructions:
 
 * JDK 11 (<https://jdk.java.net/11/)>
 * Gradle 4+ (<https://gradle.org/install/)>
 
-## Game Rules
+### Step-by-step instructions
+* Set default JDK version to 11.
+  * 
 
 ### Features of the battlefield
 
@@ -111,6 +113,8 @@ The robot language is a strict subset of the standard Java language. It consists
 
 The content of the Robot AI file should describe the actions a robot will make ***at each turn***. 
 This means that this code will be invoked at every turn for every robot in the battlefield. 
+If the robot code for the turn exceeds the timeout of 5 milliseconds,
+the robot will be kicked out of battle.
 
 The extension of the robot AI description file must be **.robot** such as **Destroyer.robot** without any spaces in the name.
 
