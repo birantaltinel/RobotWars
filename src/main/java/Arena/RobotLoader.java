@@ -44,7 +44,7 @@ public class RobotLoader {
     public static void main(String[] args) {
         RobotLoader rl = new RobotLoader();
         try{
-            Robot rabbit = rl.load("src/main/java/SampleRobots/Rabbit.robot");
+            Robot rabbit = rl.load("src/main/java/Robots/Rabbit.robot");
             rabbit.run();
         } catch (RobotNotLoadedException e) {
             e.printStackTrace();

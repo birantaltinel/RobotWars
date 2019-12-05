@@ -76,8 +76,28 @@ Please download and install the following before going through the step-by-step 
 * Gradle 4+ (<https://gradle.org/install/)>
 
 ### Step-by-step instructions
+* Place the robot files you'd like to run inside **Robots** folder within the project. 
+Please put a maximum of 4 robot files as it's not yet tested with more than 4 robots.
+* Open the terminal/command line.
 * Set default JDK version to 11.
-  * 
+  * **On MacOS**:
+  > export JAVA_HOME= /usr/libexec/java_home -v 11
+  * **On Windows**, locate your Java installation directory and run:
+  > setx -m JAVA_HOME \<java installation directory\>"
+  * **On Linux**:
+    * Find the java installation path by running
+      > update-alternatives --config java
+    * Then open the '/etc/environment' folder with a text editor and add the following:
+      > JAVA_HOME=\<PATH\>
+      > export JAVA_HOME
+    * Save and exit. Lastly run the following command to reload the system PATH:
+      > . /etc/environment
+* Navigate to the project folder within the terminal.
+* Lastly, run:
+> gradle clean build run
+
+The application should compile and start the battle automatically 
+after running the last command.
 
 ### Features of the battlefield
 

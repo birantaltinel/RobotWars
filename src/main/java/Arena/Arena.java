@@ -1,11 +1,14 @@
 package Arena;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
+import Arena.Exceptions.NoRobotFilesFoundException;
 import Arena.Exceptions.RobotNotLoadedException;
 import lombok.Getter;
 
@@ -188,11 +191,21 @@ public class Arena {
          return closestRobot;
     }
 
-    public static void main(String[] args) throws RobotNotLoadedException, InterruptedException {
+    public static void main(String[] args) throws RobotNotLoadedException, InterruptedException, NoRobotFilesFoundException {
         Arena arena = new Arena();
 
-        for(String robotFilePath: args)
-            arena.addRobot(robotFilePath);
+        File robotsFolder = new File("src/main/java/Robots");
+        File[] robotFilesArray = robotsFolder.listFiles();
+
+        if(robotFilesArray == null || robotFilesArray.length == 0)
+            throw new NoRobotFilesFoundException("No robot files found in the Robots folder");
+
+        List<File> robotFiles = Arrays.asList(robotFilesArray);
+        if(robotFiles.size() == 1)
+            robotFiles.add(robotFiles.get(0));
+
+        for(File robotFile: robotFiles)
+            arena.addRobot(robotFile.getPath());
 
         for(int turn=0; turn < 5000; turn++){
             arena.arenaGUI.updateTurns(turn);
